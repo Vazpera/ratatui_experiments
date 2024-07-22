@@ -1,5 +1,3 @@
-use std::io;
-
 use crate::tui;
 use ratatui::crossterm::style::Stylize;
 use ratatui::crossterm::terminal::size;
@@ -21,20 +19,18 @@ use ratatui::{
     widgets::{Block, Paragraph, Row, Widget},
     Frame,
 };
-
+use std::io;
 #[derive(Clone, Copy)]
 pub struct App {
     exit: bool,
     x: u8,
     y: u8,
 }
-
 impl AsMut<App> for App {
     fn as_mut(&mut self) -> &mut Self {
         self
     }
 }
-
 impl<'a> Default for App {
     fn default() -> Self {
         Self {
@@ -44,13 +40,11 @@ impl<'a> Default for App {
         }
     }
 }
-
 impl<'a> Widget for App {
     fn render(self, area: Rect, buf: &mut Buffer)
     where
         Self: Sized,
     {
-        let size_limit = vec![Constraint::Max(18)];
         let layout = Layout::new(Direction::Horizontal, vec![Constraint::Max(18)]).split(area);
         let board_area =
             Layout::new(Direction::Vertical, vec![Constraint::Max(10)]).split(layout[0]);
@@ -59,13 +53,14 @@ impl<'a> Widget for App {
             let mut spans: Vec<Span> = vec![];
             for j in 0..8 {
                 let grid_color = (i + j) % 2;
-                spans.push(match (grid_color, self.x==j, self.y==i) {
-                    (_, true, true) => Span::styled("  ", Style::default().bg(Color::from_u32(0x00888888))),
+                spans.push(match (grid_color, self.x == j, self.y == i) {
+                    (_, true, true) => {
+                        Span::styled("  ", Style::default().bg(Color::from_u32(0x00888888)))
+                    }
                     (0, _, _) => Span::styled("  ", Style::default().bg(Color::Black)),
                     (1, _, _) => Span::styled("  ", Style::default().bg(Color::White)),
                     (_, _, _) => Span::styled("  ", Style::default().bg(Color::Red)),
                 });
-                
             }
             lines.push(Line::from(spans));
         }
@@ -74,7 +69,6 @@ impl<'a> Widget for App {
             .render(board_area[0], buf);
     }
 }
-
 impl App {
     pub fn run(&mut self, terminal: &mut tui::Tui) -> io::Result<()> {
         while !self.exit {
@@ -83,15 +77,12 @@ impl App {
         }
         Ok(())
     }
-
     pub fn render_frame(&self, frame: &mut Frame) {
         frame.render_widget(*self, frame.size());
     }
-
     fn handle_events(&mut self) -> io::Result<()> {
         match event::read()? {
-            // it's important to check that the event is a key press event as
-            // crossterm also emits key release and repeat events on Windows.
+            // it's important to check that the event is a key press event as crossterm also emits key release and repeat events on Windows. Event::Key(key_event) if key_event.kind == KeyEventKind::Press => self.handle_key_event(key_event),
             Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
                 self.handle_key_event(key_event)
             }
@@ -99,7 +90,6 @@ impl App {
         };
         Ok(())
     }
-
     fn handle_key_event(&mut self, key_event: KeyEvent) {
         match key_event.code {
             KeyCode::Char('q') => self.exit = true,
