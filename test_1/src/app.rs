@@ -50,21 +50,21 @@ impl<'a> Widget for App {
         let top_right = horizontal_split.clone().split(right[0].clone());
 
         let block = Block::bordered().border_type(BorderType::Thick);
-        let _ = Paragraph::new(Line::from(vec!["Left".into()]))
+        let _ = Paragraph::new(Line::from(vec!["Left".red().bold()]))
             .alignment(Alignment::Center)
-            .block(block.clone())
+            .block(block.clone().on_black())
             .render(layout[0], buf);
-        let _ = Paragraph::new(Line::from(vec!["Bottom Right".into()]))
+        let _ = Paragraph::new(Line::from(vec!["Bottom Right".red().bold()]))
             .alignment(Alignment::Center)
-            .block(block.clone())
+            .block(block.clone().on_black())
             .render(right[1], buf);
-        let _ = Paragraph::new(Line::from(vec!["Top Middle".into()]))
+        let _ = Paragraph::new(Line::from(vec!["Top Middle".red().bold()]))
             .alignment(Alignment::Center)
-            .block(block.clone())
+            .block(block.clone().on_black())
             .render(top_right[0], buf);
-        let _ = Paragraph::new(Line::from(vec!["Top Right".into()]))
+        let _ = Paragraph::new(Line::from(vec!["Top Right".red().bold()]))
             .alignment(Alignment::Center)
-            .block(block.clone())
+            .block(block.clone().on_black())
             .render(top_right[1], buf);
     }
 }
